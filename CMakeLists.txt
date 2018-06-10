@@ -15,6 +15,7 @@ target_link_libraries (pole_detection ${PCL_LIBRARIES})
 add_executable (crop src/crop.cpp)
 target_link_libraries (crop ${PCL_LIBRARIES})
 
-add_executable (seg src/seg.cpp)
-target_link_libraries (seg ${PCL_LIBRARIES})
+add_executable (cy_seg src/cy_seg.cpp)
+target_link_libraries (cy_seg ${PCL_LIBRARIES})
+
 
