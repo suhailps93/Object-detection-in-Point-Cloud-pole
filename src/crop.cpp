@@ -18,7 +18,7 @@ int main()
     pcl::PCDReader reader;//读
     pcl::ExtractIndices<PointT> extract;
     pcl::visualization::CloudViewer viewer("cloud viewer");//显示
-    reader.read<pcl::PointXYZ>("../pointclouds/no_plane.pcd", *cloud);//
+    reader.read<pcl::PointXYZ>("../pointclouds/final_project_point_cloud.pcd", *cloud);//
             char c;
     while (true)
     {

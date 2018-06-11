@@ -21,7 +21,7 @@ def draw_result(source, target):
 def prepare_dataset(voxel_size):
     print(":: Load two point clouds and disturb initial pose.")
     source = read_point_cloud("../pointclouds/pole1.pcd")
-    target = read_point_cloud("../pointclouds/no_plane.pcd")
+    target = read_point_cloud("../pointclouds/op_1.pcd")
     trans_init = np.asarray([[0.0, 0.0, 1.0, 0.0],
                             [1.0, 0.0, 0.0, 0.0],
                             [0.0, 1.0, 0.0, 0.0],
@@ -91,14 +91,15 @@ if __name__ == "__main__":
     final=read_point_cloud("../pointclouds/pole1.pcd")
     for x in xrange(1,10):
 
-        voxel_size = 0.1 # means 5cm for the dataset
+        voxel_size = 1 # means 5cm for the dataset
         # source, target, source_down, target_down, source_fpfh, target_fpfh = \
                 # prepare_dataset(voxel_size)
 
 
 
         source = read_point_cloud("../pointclouds/pole"+str(x)+".pcd")
-        target = read_point_cloud("../pointclouds/no_plane.pcd")
+        # source = read_point_cloud("../pointclouds/polec.pcd")
+        target = read_point_cloud("../pointclouds/final_project_point_cloud.pcd")
         trans_init = np.asarray([[0.0, 0.0, 1.0, 0.0],
                                 [1.0, 0.0, 0.0, 0.0],
                                 [0.0, 1.0, 0.0, 0.0],
@@ -111,9 +112,10 @@ if __name__ == "__main__":
         source.transform(trans_init)
         draw_registration_result(source, target, np.identity(4))
 
+        # source_down = source#voxel_down_sample(source, voxel_size)
+        # target_down = target#voxel_down_sample(target, voxel_size)
         source_down = source#voxel_down_sample(source, voxel_size)
         target_down = target#voxel_down_sample(target, voxel_size)
-
         radius_normal = voxel_size * 2
         print(":: Estimate normal with search radius %.3f." % radius_normal)
         estimate_normals(source_down, KDTreeSearchParamHybrid(
@@ -122,7 +124,7 @@ if __name__ == "__main__":
                 radius = radius_normal, max_nn = 30))
 
         # radius_feature = voxel_size * 5
-        radius_feature = 10
+        radius_feature = 1
         print(":: Compute FPFH feature with search radius %.3f." % radius_feature)
         source_fpfh = compute_fpfh_feature(source_down,
                 KDTreeSearchParamHybrid(radius = radius_feature, max_nn = 100))
@@ -133,23 +135,25 @@ if __name__ == "__main__":
 
         fitness=0
 
-        while fitness < 0.9:
+        while fitness <0.9:
 
             result_ransac = execute_global_registration(source_down, target_down,
                     source_fpfh, target_fpfh, voxel_size)
             print(result_ransac)
 
             fitness=result_ransac.fitness
-            draw_registration_result(source_down, target_down,
-                    result_ransac.transformation)
+            # draw_registration_result(source_down, target_down,
+            #         result_ransac.transformation)
 
             result_icp = refine_registration(source, target,
                     source_fpfh, target_fpfh, voxel_size)
             print(result_icp)
             fitness=result_icp.fitness
-            draw_registration_result(source, target, result_icp.transformation)
+
+            if fitness>0.2:
+                draw_registration_result(source, target, result_icp.transformation)
 
             source.transform(result_icp.transformation)
-            final=final+source
+        final=final+source
 
-            draw_result(final,target)
+        draw_result(final,target)

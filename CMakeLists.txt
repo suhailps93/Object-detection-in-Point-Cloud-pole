@@ -9,13 +9,14 @@ link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS})
 
 
-add_executable (pole_detection src/pole_detection.cpp)
-target_link_libraries (pole_detection ${PCL_LIBRARIES})
+add_executable (generate_pc src/generate_pc.cpp)
+target_link_libraries (generate_pc ${PCL_LIBRARIES})
 
 add_executable (crop src/crop.cpp)
 target_link_libraries (crop ${PCL_LIBRARIES})
 
-add_executable (cy_seg src/cy_seg.cpp)
-target_link_libraries (cy_seg ${PCL_LIBRARIES})
+add_executable (resampling src/resampling.cpp)
+target_link_libraries (resampling ${PCL_LIBRARIES})
+
 
 
